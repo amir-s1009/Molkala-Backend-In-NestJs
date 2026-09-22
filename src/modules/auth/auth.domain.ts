@@ -1,12 +1,14 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { hash, compare } from 'bcrypt';
 import { Role } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
 
 export type JWT = {
   userId: string;
   roles: Role[];
 };
 
+@Injectable()
 export default class AuthDomain {
   private SALT = 12;
 
