@@ -1,0 +1,193 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum OrderStatus {
+  PAYMENT_PENDING
+  PAYMENT_BROKEN
+  EXPIRED
+  CANCELED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  EXPIRED
+  REFUNDED
+  REFUND_PENDING
+}
+
+enum StockReservationStatus {
+  ACTIVE
+  RELEASED
+  CONVERTED
+  EXPIRED
+  CANCELED
+}
+
+model User {
+  id        String     @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String     @unique
+  password  String
+  roles     UserRole[]
+  cart      Cart?
+  orders    Order[]
+}
+
+model LoginLog {
+  id           String   @id @default(uuid())
+  email        String
+  isSuccessful Boolean
+  createdAt    DateTime @default(now())
+}
+
+model UserRole {
+  id        String   @default(uuid())
+  title     Role     @default(USER)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([title, userId])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  poster    File?
+  createdAt DateTime  @default(now())
+  products  Product[]
+}
+
+model Product {
+  id         String     @id @default(uuid())
+  name       String
+  price      Int
+  stock      Int        @default(0)
+  bio        String?
+  poster     File?
+  isPublic   Boolean    @default(false)
+  isPinned   Boolean    @default(false)
+  categoryId String?
+  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  cartItems  CartItem[]
+  reservations StockReservation[]
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  qty       Int     @default(1)
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+  isFreezed Boolean    @default(false)
+}
+
+model StockReservation {
+  id String @id @default(uuid())
+  orderId String
+  order Order @relation(fields: [orderId], references: [id])
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+  qty Int
+  status StockReservationStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+  canceledAt DateTime?
+  releasedAt DateTime?
+  convertedAt DateTime?
+}
+
+model Order {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  address     OrderAddress?
+  status      OrderStatus   @default(PAYMENT_PENDING)
+  createdAt   DateTime      @default(now())
+  paymentBrokenAt DateTime?
+  canceledAt DateTime?
+  expiredAt DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  items       OrderItem[]
+  reservations StockReservation[]
+  transaction Transaction?
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+  name    String
+  price   Int
+  qty     Int
+}
+
+model OrderAddress {
+  id       String @id @default(uuid())
+  orderId  String @unique
+  order    Order  @relation(fields: [orderId], references: [id])
+  province String
+  city     String
+  route    String
+}
+
+model Transaction {
+  id               String            @id @default(uuid())
+  orderId          String            @unique
+  order            Order             @relation(fields: [orderId], references: [id])
+  gatewayReference String? @unique
+  amount           Int
+  status           TransactionStatus @default(PENDING)
+  createdAt        DateTime          @default(now())
+  successfulAt     DateTime?
+  failedAt         DateTime?
+  expiredAt        DateTime?
+  refundedAt       DateTime?
+}
+
+model RequestForProduct {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model File {
+  id         String    @id @default(uuid())
+  base64     String
+  productId  String?   @unique
+  categoryId String?   @unique
+  product    Product?  @relation(fields: [productId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id])
+}
