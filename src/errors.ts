@@ -28,3 +28,8 @@ export class ForbiddenError extends ActionError {
     super(403, message);
   }
 }
+export class TooManyRequestsError extends ActionError {
+  constructor(message: string) {
+    super(429, message);
+  }
+}

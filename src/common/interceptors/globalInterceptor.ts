@@ -8,7 +8,7 @@ import { map } from 'rxjs';
 import { ApiOutput, CustomApiOutput } from '../../types.js';
 
 @Injectable()
-export class ResponseInterceptor implements NestInterceptor {
+export class GlobalInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
       map((response) => {
@@ -17,7 +17,7 @@ export class ResponseInterceptor implements NestInterceptor {
             ok: true,
             code: 200,
             data: response.output.data,
-            message: response.output.message,
+            message: response.output.message ?? 'عملیات موفق',
             meta: response.output.meta,
           } as ApiOutput;
         }
@@ -25,7 +25,8 @@ export class ResponseInterceptor implements NestInterceptor {
         return {
           ok: true,
           code: 200,
-          ...response,
+          data: response,
+          message: 'عملیات موفق',
         } as ApiOutput;
       }),
     );
