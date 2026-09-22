@@ -1,3 +1,6 @@
+import { Request } from 'express';
+import { JWT } from './modules/auth/auth.domain.js';
+
 export type ApiOutput<D = undefined, M = undefined> = {
   ok: boolean;
   code: number;
@@ -17,3 +20,5 @@ export class CustomApiOutput<D = undefined, M = undefined> {
     },
   ) {}
 }
+
+export type AuthenticatedRequest = Request & { user: JWT };

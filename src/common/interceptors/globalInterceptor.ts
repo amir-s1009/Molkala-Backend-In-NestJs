@@ -25,8 +25,8 @@ export class GlobalInterceptor implements NestInterceptor {
         return {
           ok: true,
           code: 200,
-          data: response,
           message: 'عملیات موفق',
+          data: response,
         } as ApiOutput;
       }),
     );

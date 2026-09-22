@@ -20,7 +20,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     return response.status(500).json({
       ok: false,
       code: 500,
-      message: 'Internal server error',
+      message: 'خطای غیر منتظره ای رخ داد.',
     });
   }
 }

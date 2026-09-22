@@ -9,3 +9,7 @@ export type CartItemsListItemDTO = {
   };
   qty: number;
 };
+
+export class UpdateCartItemQtyDTO {
+  qty: number;
+}

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CartItemsListItemDTO } from './user.dto.js';
-import { prisma } from '../../../../db/prisma.js';
+import { prisma } from '../../../db/prisma.js';
 import { BadRequestError, NotFoundError } from '../../../errors.js';
 
 @Injectable()
-export class UserService {
+export class CartsUserService {
   async getCartItems({
     userId,
   }: {
@@ -48,7 +48,7 @@ export class UserService {
     }));
   }
 
-  async userCreateCartItem({
+  async createCartItem({
     productId,
     userId,
   }: {
@@ -141,6 +141,93 @@ export class UserService {
           },
         });
       }
+    });
+  }
+
+  async deleteCartItem({ id, userId }: { id: string; userId: string }) {
+    const userCart = await prisma.cart.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!userCart) throw new NotFoundError('شما سبد خریدی ندارید.');
+
+    if (userCart.isFreezed)
+      throw new BadRequestError(
+        'سبد شما جهت تکمیل سفارش در جریان شما منجمد شده است.',
+      );
+
+    const productInCartAlready = await prisma.cartItem.findUnique({
+      where: {
+        id,
+        cart: {
+          userId,
+        },
+      },
+    });
+
+    if (!productInCartAlready)
+      throw new NotFoundError('محصول در سبد خرید شما موجود نیست.');
+
+    await prisma.cartItem.delete({
+      where: {
+        cart: {
+          userId,
+        },
+        id,
+      },
+    });
+  }
+
+  async changeCartItemQty({
+    id,
+    newQty,
+    userId,
+  }: {
+    id: string;
+    newQty: number;
+    userId: string;
+  }) {
+    const userCart = await prisma.cart.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!userCart) throw new NotFoundError('سبد خرید شما یافت نشد.');
+
+    if (userCart.isFreezed)
+      throw new BadRequestError(
+        'سبد شما جهت تکمیل سفارش در جریان شما منجمد شده است.',
+      );
+
+    if (newQty < 1)
+      throw new BadRequestError(
+        'تعداد محصول در سبد خرید نمیتواند کمتر از 1 عدد باشد.',
+      );
+
+    const cartItem = await prisma.cartItem.findUnique({
+      where: {
+        id,
+        cart: {
+          userId,
+        },
+      },
+    });
+
+    if (!cartItem) throw new NotFoundError('محصول در سبد خرید شما موجود نیست.');
+
+    await prisma.cartItem.update({
+      where: {
+        id,
+        cart: {
+          userId,
+        },
+      },
+      data: {
+        qty: newQty,
+      },
     });
   }
 }

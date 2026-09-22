@@ -4,7 +4,7 @@ import {
   loginUserDTORes,
   SignupUserDTOReq,
 } from './web.dto.js';
-import { prisma } from '../../../db/prisma.js';
+import { prisma } from '../../db/prisma.js';
 import AuthDomain from './auth.domain.js';
 import {
   BadRequestError,
