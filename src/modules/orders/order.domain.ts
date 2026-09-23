@@ -1,16 +1,16 @@
+import { Injectable } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
 
+@Injectable()
 export default class OrderDomain {
-  static calculateItemsTotalAmount(
-    items: { price: number; qty: number }[],
-  ): number {
+  calculateItemsTotalAmount(items: { price: number; qty: number }[]): number {
     return items.reduce(
       (prev, current) => prev + current.price * current.qty,
       0,
     );
   }
 
-  static countOrdersByStatus(
+  countOrdersByStatus(
     orders: { status: OrderStatus }[],
     countableStatus: OrderStatus[],
   ): number {
