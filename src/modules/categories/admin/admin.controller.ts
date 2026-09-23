@@ -24,7 +24,7 @@ export class CategoriesAdminController {
     return await this.adminService.getAllCategories();
   }
 
-  @Get('getAllCategories/:id')
+  @Get('getCategoryDetail/:id')
   async getCategoryDetail(@Param('id') id: string) {
     return await this.adminService.getCategoryDetail(id);
   }

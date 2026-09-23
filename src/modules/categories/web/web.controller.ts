@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { CategoriesWebService } from './web.service.js';
 
-@Controller('web')
-export class WebController {}
+@Controller('categories/web')
+export class CategoriesWebController {
+  constructor(private readonly webService: CategoriesWebService) {}
+
+  @Get('getAllCategories')
+  async getAllCategories() {
+    return await this.webService.getAllCategories();
+  }
+}
