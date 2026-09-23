@@ -1,17 +1,17 @@
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus } from '@prisma/client';
 
-export type CreateOrderDTO = {
+export class CreateOrderDTO {
   address: {
     province: string;
     city: string;
     route: string;
   };
-};
+}
 
 export type OrderCheckoutDetailsDTO = {
   orderId: string;
   items: {
-    id:string;
+    id: string;
     name: string;
     qty: number;
     unitPrice: number;
@@ -34,7 +34,7 @@ export type OrderUserListItemDTO = {
   canceledAt: Date | null;
   expiredAt: Date | null;
   items: {
-    id:string;
+    id: string;
     name: string;
     qty: number;
     unitPrice: number;

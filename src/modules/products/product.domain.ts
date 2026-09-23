@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export default class ProductDomain {
-  static sortIds(ids: string[]): string[] {
+  sortIds(ids: string[]): string[] {
     return ids.sort((a, b) => a.localeCompare(b));
   }
 }

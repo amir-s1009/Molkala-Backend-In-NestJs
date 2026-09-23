@@ -10,9 +10,10 @@ import { ProductsModule } from './modules/products/products.module.js';
 import { TransactionsModule } from './modules/transactions/transactions.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { ReservationsModule } from './modules/reservations/reservations.module.js';
 
 @Module({
-  imports: [CartsModule, CategoriesModule, OrdersModule, PaymentModule, ProductsModule, TransactionsModule, UsersModule, AuthModule],
+  imports: [CartsModule, CategoriesModule, OrdersModule, PaymentModule, ProductsModule, TransactionsModule, UsersModule, AuthModule, ReservationsModule],
   controllers: [AppController],
   providers: [AppService],
 })
