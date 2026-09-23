@@ -1,13 +1,13 @@
-export type CreateCategoryDTO = {
+export class CreateCategoryDTO {
   name: string;
   base64?: string;
-};
+}
 
-export type UpdateCategoryDTO = {
+export class UpdateCategoryDTO {
   id: string;
   name?: string;
   base64?: string | null;
-};
+}
 
 export type CategoryAdminListItemDTO = {
   id: string;
